@@ -158,15 +158,15 @@
             const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
             typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
 
-            <!-- if (membres.length < 2) { -->
-                <!-- alert('Veuillez entrer au moins 2 membres.'); -->
-                <!-- return; -->
-            <!-- } -->
+             // if (membres.length < 2) { 
+                 // alert('Veuillez entrer au moins 2 membres.'); 
+                 // return; 
+             // } 
 
-            <!-- if (typesBuissons.length < membres.length - 1) { -->
-                <!-- alert('Veuillez entrer un nombre de types de buissons suffisant pour le nombre de membres.'); -->
-                <!-- return; -->
-            <!-- } -->
+             // if (typesBuissons.length < membres.length - 1) { 
+                 // alert('Veuillez entrer un nombre de types de buissons suffisant pour le nombre de membres.'); 
+                 // return; 
+             // } 
 
             const distribution = generateBuissonList(membres);
             displayDistribution(distribution);
@@ -183,7 +183,7 @@
             // Execute the copy command
             try {
                 document.execCommand('copy');
-                alert('Le résultat a été copié dans le presse-papiers.');
+            //    alert('Le résultat a été copié dans le presse-papiers.');
             } catch (err) {
                 console.error('Échec de la copie', err);
             }
@@ -203,7 +203,7 @@
             // Execute the copy command
             try {
                 document.execCommand('copy');
-                alert('La ligne a été copiée dans le presse-papiers.');
+            //   alert('La ligne a été copiée dans le presse-papiers.');
             } catch (err) {
                 console.error('Échec de la copie', err);
             }
