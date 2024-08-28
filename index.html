@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribution de Buissons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .container {
+            margin: 20px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .copy-button {
+            margin-top: 10px;
+        }
+        .copy-row-button {
+            margin-left: 10px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Distribution de Buissons</h1>
+        <div class="input-group">
+            <label for="membersInput">Entrez les noms des membres (séparés par des virgules) :</label>
+            <input type="text" id="membersInput" placeholder="Alice, Bob, Charlie, David, Eve, Frank">
+        </div>
+        <div class="input-group">
+            <label for="buissonsInput">Entrez les types de buissons (séparés par des virgules) :</label>
+            <input type="text" id="buissonsInput" placeholder="Herbes à paillote, Streptosolens, Arbre aux papillons">
+        </div>
+        <div class="input-group">
+            <button onclick="generateDistribution()">Générer Distribution</button>
+        </div>
+        <table id="distributionTable">
+            <thead>
+                <tr>
+                    <th>Membre</th>
+                    <th>Buissons à Donner</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="input-group copy-button">
+            <button onclick="copyToClipboard()">Copier tout le tableau</button>
+        </div>
+    </div>
+
+    <script>
+        let typesBuissons = [];
+
+        function generateBuissonList(membres) {
+            const numMembres = membres.length;
+            const numBuissons = typesBuissons.length;
+
+            let buissons = [];
+
+            for (let i = 0; i < numMembres; i++) {
+                let memberBuissons = [];
+                let buissonIndex = 0;
+
+                for (let j = 0; j < numMembres - 1; j++) {
+                    let recipientIndex = (i + j + 1) % numMembres; // Décalage circulaire pour éviter de se donner à soi-même
+
+                    if (memberBuissons.length < numBuissons) {
+                        // Ajouter le buisson à la liste pour ce membre
+                        memberBuissons.push({
+                            recipient: membres[recipientIndex],
+                            buisson: typesBuissons[buissonIndex]
+                        });
+                    }
+                    // Passer au prochain buisson pour le prochain membre
+                    buissonIndex = (buissonIndex + 1) % numBuissons;
+                }
+
+                buissons.push({ member: membres[i], list: memberBuissons });
+            }
+
+            return buissons;
+        }
+
+        function displayDistribution(distribution) {
+            const tableBody = document.querySelector('#distributionTable tbody');
+            tableBody.innerHTML = ''; // Clear previous content
+
+            distribution.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                
+                // Créer une cellule pour le membre
+                const cellMembre = document.createElement('td');
+                cellMembre.textContent = entry.member;
+                row.appendChild(cellMembre);
+
+                // Regrouper les buissons par type
+                const buissonMap = {};
+                entry.list.forEach(b => {
+                    if (!buissonMap[b.buisson]) {
+                        buissonMap[b.buisson] = [];
+                    }
+                    buissonMap[b.buisson].push(b.recipient);
+                });
+
+                // Créer une cellule pour les buissons regroupés
+                const cellBuissons = document.createElement('td');
+                cellBuissons.innerHTML = Object.keys(buissonMap).map(buisson => {
+                    return `${buisson}: ${buissonMap[buisson].join(', ')}`;
+                }).join(' | ');
+                
+                row.appendChild(cellBuissons);
+
+                // Ajouter un bouton pour copier cette ligne
+                const cellAction = document.createElement('td');
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copier';
+                copyButton.className = 'copy-row-button';
+                copyButton.onclick = () => copyRow(index);
+                cellAction.appendChild(copyButton);
+                row.appendChild(cellAction);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function generateDistribution() {
+            const membersInput = document.getElementById('membersInput').value;
+            const buissonsInput = document.getElementById('buissonsInput').value;
+
+            const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
+            typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
+
+            <!-- if (membres.length < 2) { -->
+                <!-- alert('Veuillez entrer au moins 2 membres.'); -->
+                <!-- return; -->
+            <!-- } -->
+
+            <!-- if (typesBuissons.length < membres.length - 1) { -->
+                <!-- alert('Veuillez entrer un nombre de types de buissons suffisant pour le nombre de membres.'); -->
+                <!-- return; -->
+            <!-- } -->
+
+            const distribution = generateBuissonList(membres);
+            displayDistribution(distribution);
+        }
+
+        function copyToClipboard() {
+            // Get the table text content
+            const table = document.getElementById('distributionTable');
+            const range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().removeAllRanges(); // Clear any existing selections
+            window.getSelection().addRange(range);   // Select the table content
+
+            // Execute the copy command
+            try {
+                document.execCommand('copy');
+                alert('Le résultat a été copié dans le presse-papiers.');
+            } catch (err) {
+                console.error('Échec de la copie', err);
+            }
+
+            // Deselect the content
+            window.getSelection().removeAllRanges();
+        }
+
+        function copyRow(index) {
+            // Get the specific row
+            const row = document.querySelectorAll('#distributionTable tbody tr')[index];
+            const range = document.createRange();
+            range.selectNode(row);
+            window.getSelection().removeAllRanges(); // Clear any existing selections
+            window.getSelection().addRange(range);   // Select the row content
+
+            // Execute the copy command
+            try {
+                document.execCommand('copy');
+                alert('La ligne a été copiée dans le presse-papiers.');
+            } catch (err) {
+                console.error('Échec de la copie', err);
+            }
+
+            // Deselect the content
+            window.getSelection().removeAllRanges();
+        }
+    </script>
+</body>
+</html>
+
