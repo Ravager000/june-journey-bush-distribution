@@ -167,7 +167,7 @@
                 </thead>
                 <tbody></tbody>
             </table>
-            <div class="input-group copy-button">
+            <div class="input-group copy-button" id="copyButtonContainer" style="display: none;">
                 <button type="button" onclick="distributor.copyToClipboard()">Copier tout le tableau</button>
             </div>
         </section>
@@ -177,6 +177,7 @@
     constructor() {
         this.typesBuissons = [];
         this.tableBody = document.querySelector('#distributionTable tbody');
+        this.copyButtonContainer = document.getElementById('copyButtonContainer');
     }
 
     // Generates a distribution of bushes among members
@@ -184,6 +185,9 @@
         const numMembres = membres.length;
         const numBuissons = this.typesBuissons.length;
 
+        if (numMembres === 0) {
+            throw new Error('Aucun membre spécifié.');
+        }
         if (numBuissons === 0) {
             throw new Error('Aucun type de buisson spécifié.');
         }
@@ -267,13 +271,17 @@
 
         const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
         this.typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
-
-        try {
+            // TODO: Validity Check
+            try {
             const distribution = this.generateBuissonList(membres);
             this.displayDistribution(distribution);
+            // Show the copy button after distribution is generated
+            this.copyButtonContainer.style.display = 'block';
         } catch (error) {
             console.error('Erreur lors de la génération de la distribution:', error);
             alert(error.message);
+            // Hide the copy button if there's an error
+            this.copyButtonContainer.style.display = 'none';
         }
     }
     // Copies the entire table to clipboard
