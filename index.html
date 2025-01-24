@@ -5,213 +5,352 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distribution de Buissons</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --text-color: #333;
+            --background-color: #f4f4f4;
+            --border-color: #e1e1e1;
         }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin-top: 20px;
         }
+
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: var(--primary-color);
+            color: white;
         }
-        .container {
-            margin: 20px;
-        }
+
         .input-group {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
+
         .input-group label {
             display: block;
             margin-bottom: 5px;
+            font-weight: bold;
         }
+
         .input-group input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
             box-sizing: border-box;
         }
-        .copy-button {
-            margin-top: 10px;
-        }
-        .copy-row-button {
-            margin-left: 10px;
-            padding: 4px 8px;
+
+        .input-group button {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-group button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .copy-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .copy-row-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-row-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        @media screen and (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                margin-bottom: 15px;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            td:before {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                content: attr(data-label);
+                font-weight: bold;
+            }
+            .input-group input, .input-group button {
+                width: 100%;
+            }
+            .container {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Distribution de Buissons</h1>
-        <div class="input-group">
-            <label for="membersInput">Entrez les noms des membres (séparés par des virgules) :</label>
-            <input type="text" id="membersInput" placeholder="Alice, Bob, Charlie, David, Eve, Frank">
-        </div>
-        <div class="input-group">
-            <label for="buissonsInput">Entrez les types de buissons (séparés par des virgules) :</label>
-            <input type="text" id="buissonsInput" placeholder="Herbes à paillote, Streptosolens, Arbre aux papillons">
-        </div>
-        <div class="input-group">
-            <button onclick="generateDistribution()">Générer Distribution</button>
-        </div>
-        <table id="distributionTable">
-            <thead>
-                <tr>
-                    <th>Membre</th>
-                    <th>Buissons à Donner</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <div class="input-group copy-button">
-            <button onclick="copyToClipboard()">Copier tout le tableau</button>
-        </div>
-    </div>
+    <main class="container">
+        <section>
+            <h1>Distribution de Buissons</h1>
+            <form>
+                <div class="input-group">
+                    <label for="membersInput">Entrez les noms des membres (séparés par des virgules) :</label>
+                    <input type="text" id="membersInput" name="members" placeholder="Alice, Bob, Charlie, David, Eve, Frank" required>
+                </div>
+                <div class="input-group">
+                    <label for="buissonsInput">Entrez les types de buissons (séparés par des virgules) :</label>
+                    <input type="text" id="buissonsInput" name="buissons" placeholder="Herbes à paillote, Streptosolens, Arbre aux papillons" required>
+                </div>
+                <div class="input-group">
+                    <button type="button" onclick="distributor.generateDistribution()">Générer Distribution</button>
+                </div>
+            </form>
+            <table id="distributionTable">
+                <thead>
+                    <tr>
+                        <th>Membre</th>
+                        <th>Buissons à Donner</th>
+                        <th></th> 
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="input-group copy-button">
+                <button type="button" onclick="distributor.copyToClipboard()">Copier tout le tableau</button>
+            </div>
+        </section>
+    </main>
 
-    <script>
-        let typesBuissons = [];
+    <script >class BuissonDistributor {
+    constructor() {
+        this.typesBuissons = [];
+        this.tableBody = document.querySelector('#distributionTable tbody');
+    }
 
-        function generateBuissonList(membres) {
-            const numMembres = membres.length;
-            const numBuissons = typesBuissons.length;
+    // Generates a distribution of bushes among members
+    generateBuissonList(membres) {
+        const numMembres = membres.length;
+        const numBuissons = this.typesBuissons.length;
 
-            let buissons = [];
-
-            for (let i = 0; i < numMembres; i++) {
-                let memberBuissons = [];
-                let buissonIndex = 0;
-
-                for (let j = 0; j < numMembres - 1; j++) {
-                    let recipientIndex = (i + j + 1) % numMembres; // Décalage circulaire pour éviter de se donner à soi-même
-
-                    if (memberBuissons.length < numBuissons) {
-                        // Ajouter le buisson à la liste pour ce membre
-                        memberBuissons.push({
-                            recipient: membres[recipientIndex],
-                            buisson: typesBuissons[buissonIndex]
-                        });
-                    }
-                    // Passer au prochain buisson pour le prochain membre
-                    buissonIndex = (buissonIndex + 1) % numBuissons;
-                }
-
-                buissons.push({ member: membres[i], list: memberBuissons });
-            }
-
-            return buissons;
+        if (numBuissons === 0) {
+            throw new Error('Aucun type de buisson spécifié.');
         }
 
-        function displayDistribution(distribution) {
-            const tableBody = document.querySelector('#distributionTable tbody');
-            tableBody.innerHTML = ''; // Clear previous content
-
-            distribution.forEach((entry, index) => {
-                const row = document.createElement('tr');
-                
-                // Créer une cellule pour le membre
-                const cellMembre = document.createElement('td');
-                cellMembre.textContent = entry.member;
-                row.appendChild(cellMembre);
-
-                // Regrouper les buissons par type
-                const buissonMap = {};
-                entry.list.forEach(b => {
-                    if (!buissonMap[b.buisson]) {
-                        buissonMap[b.buisson] = [];
-                    }
-                    buissonMap[b.buisson].push(b.recipient);
+        return membres.map((member, memberIndex) => {
+            let memberBuissons = [];
+            for (let j = 1; j < numMembres; j++) {
+                const recipientIndex = (memberIndex + j) % numMembres;
+                const buisson = this.typesBuissons[(j - 1) % numBuissons]; // Cycle through bush types
+                memberBuissons.push({
+                    recipient: membres[recipientIndex],
+                    buisson: buisson
                 });
+            }
+            return { member, list: memberBuissons };
+        });
+    }
 
-                // Créer une cellule pour les buissons regroupés
-                const cellBuissons = document.createElement('td');
-                cellBuissons.innerHTML = Object.keys(buissonMap).map(buisson => {
-                    return `${buisson}: ${buissonMap[buisson].join(', ')}`;
-                }).join(' | ');
-                
-                row.appendChild(cellBuissons);
+    // Displays the distribution in the table
+    displayDistribution(distribution) {
+        this.tableBody.innerHTML = ''; // Clear previous content
 
-                // Ajouter un bouton pour copier cette ligne
-                const cellAction = document.createElement('td');
-                const copyButton = document.createElement('button');
-                copyButton.textContent = 'Copier';
-                copyButton.className = 'copy-row-button';
-                copyButton.onclick = () => copyRow(index);
-                cellAction.appendChild(copyButton);
-                row.appendChild(cellAction);
+        distribution.forEach((entry, index) => {
+            const row = document.createElement('tr');
 
-                tableBody.appendChild(row);
+            const cellMembre = this.createCell(entry.member, 'Membres');
+            row.appendChild(cellMembre);
+
+            // Group bushes by type for display
+            const groupedBuissons = this.groupBuissons(entry.list);
+            const cellBuissons = this.createCell(this.formatBuissons(groupedBuissons), 'Buissons à Donner');
+            row.appendChild(cellBuissons);
+
+            const cellAction = this.createCopyCell(index, entry.member);
+            row.appendChild(cellAction);
+
+            this.tableBody.appendChild(row);
+        });
+    }
+
+    // Helper method to create table cells with data labels for responsiveness
+    createCell(content, label) {
+        const cell = document.createElement('td');
+        cell.textContent = content;
+        cell.setAttribute('data-label', label);
+        return cell;
+    }
+
+    // Helper method to group bushes by type
+    groupBuissons(list) {
+        return list.reduce((acc, curr) => {
+            if (!acc[curr.buisson]) acc[curr.buisson] = [];
+            acc[curr.buisson].push(curr.recipient);
+            return acc;
+        }, {});
+    }
+
+    // Format grouped bushes for display
+    formatBuissons(buissonMap) {
+        return Object.keys(buissonMap).map(buisson => 
+            `${buisson}: ${buissonMap[buisson].join(', ')}`
+        ).join(' | ');
+    }
+
+    // Create the action cell for copying a row
+    createCopyCell(index, member) {
+        const cellAction = document.createElement('td');
+        const copyButton = document.createElement('button');
+        copyButton.textContent = 'Copier';
+        copyButton.className = 'copy-row-button';
+        copyButton.onclick = () => this.copyRow(index);
+        copyButton.setAttribute('aria-label', `Copier la ligne pour ${member}`);
+        cellAction.appendChild(copyButton);
+        return cellAction;
+    }
+
+    // Main function to generate distribution based on user input
+    generateDistribution() {
+        const membersInput = document.getElementById('membersInput').value;
+        const buissonsInput = document.getElementById('buissonsInput').value;
+
+        const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
+        this.typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
+
+        try {
+            const distribution = this.generateBuissonList(membres);
+            this.displayDistribution(distribution);
+        } catch (error) {
+            console.error('Erreur lors de la génération de la distribution:', error);
+            alert(error.message);
+        }
+    }
+    // Copies the entire table to clipboard
+    copyToClipboard() {
+    const table = document.getElementById('distributionTable');
+    const rows = table ? table.querySelectorAll('tr') : [];
+    let textToCopy = '';
+
+    rows.forEach((row, rowIndex) => {
+        const cells = row.cells;
+        if (cells && Array.from) { // Check if cells exist and Array.from works
+            Array.from(cells).forEach((cell, cellIndex) => {
+                // Only copy the content if the cell doesn't contain the "Copier" button
+                if (!cell.querySelector('.copy-row-button')) {
+                    textToCopy += (cellIndex === 0 ? `${cell.textContent} =` : cell.textContent);
+                    if (cellIndex < cells.length - 2) { // -2 because we exclude the last cell which might have the button
+                        textToCopy += '\t'; // Tab as separator for cells
+                    }
+                }
             });
         }
+        if (rowIndex < rows.length - 1) textToCopy += '\n'; // New line for each row
+    });
 
-        function generateDistribution() {
-            const membersInput = document.getElementById('membersInput').value;
-            const buissonsInput = document.getElementById('buissonsInput').value;
+    this.copyTextToClipboard(textToCopy);
+}
+    // Copies a single row to clipboard
+    copyRow(index) {
+    const row = this.tableBody.querySelectorAll('tr')[index];
+    if (!row) return; // Ensure the row exists before proceeding
 
-            const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
-            typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
-
-             // if (membres.length < 2) { 
-                 // alert('Veuillez entrer au moins 2 membres.'); 
-                 // return; 
-             // } 
-
-             // if (typesBuissons.length < membres.length - 1) { 
-                 // alert('Veuillez entrer un nombre de types de buissons suffisant pour le nombre de membres.'); 
-                 // return; 
-             // } 
-
-            const distribution = generateBuissonList(membres);
-            displayDistribution(distribution);
-        }
-
-        function copyToClipboard() {
-            // Get the table text content
-            const table = document.getElementById('distributionTable');
-            const range = document.createRange();
-            range.selectNode(table);
-            window.getSelection().removeAllRanges(); // Clear any existing selections
-            window.getSelection().addRange(range);   // Select the table content
-
-            // Execute the copy command
-            try {
-                document.execCommand('copy');
-            //    alert('Le résultat a été copié dans le presse-papiers.');
-            } catch (err) {
-                console.error('Échec de la copie', err);
+    let textToCopy = '';
+    
+    Array.from(row.cells).forEach((cell, idx) => {
+        // Skip the cell if it contains the copy button
+        if (!cell.querySelector('.copy-row-button')) {
+            textToCopy += (idx === 0 ? `${cell.textContent} =` : cell.textContent);
+            if (idx < row.cells.length - 2) { // -2 because we exclude the last cell which might have the button
+                textToCopy += '\t';
             }
-
-            // Deselect the content
-            window.getSelection().removeAllRanges();
         }
+    });
 
-        function copyRow(index) {
-            // Get the specific row
-            const row = document.querySelectorAll('#distributionTable tbody tr')[index];
-            const range = document.createRange();
-            range.selectNode(row);
-            window.getSelection().removeAllRanges(); // Clear any existing selections
-            window.getSelection().addRange(range);   // Select the row content
+    this.copyTextToClipboard(textToCopy);
+}
 
-            // Execute the copy command
-            try {
-                document.execCommand('copy');
-            //   alert('La ligne a été copiée dans le presse-papiers.');
-            } catch (err) {
-                console.error('Échec de la copie', err);
-            }
-
-            // Deselect the content
-            window.getSelection().removeAllRanges();
+    // Helper method to copy text to clipboard with fallback
+    copyTextToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(err => {
+            console.error('Could not copy text:', err);
+            this.copyTextFallback(text);
+        });
+    } else {
+        this.copyTextFallback(text);
+    }
+}
+    // Fallback method for copying text if Clipboard API isn't supported
+    copyTextFallback(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed'; // Avoid scrolling the page
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            console.log('Copied to clipboard');
+        } catch (err) {
+            console.error('Could not copy text:', err);
+        } finally {
+            document.body.removeChild(textarea);
         }
-    </script>
+    }
+}
+
+// Initialize the distributor
+const distributor = new BuissonDistributor();
+</script>
 </body>
 </html>
-
