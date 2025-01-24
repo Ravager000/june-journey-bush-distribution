@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +28,7 @@
             max-width: 800px;
             padding: 20px;
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
 
@@ -42,7 +43,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid var(--border-color);
             padding: 12px;
             text-align: left;
@@ -105,22 +107,32 @@
         }
 
         @media screen and (max-width: 600px) {
-            table, thead, tbody, th, td, tr {
+
+            table,
+            thead,
+            tbody,
+            th,
+            td,
+            tr {
                 display: block;
             }
+
             thead tr {
                 position: absolute;
                 top: -9999px;
                 left: -9999px;
             }
+
             tr {
                 margin-bottom: 15px;
             }
+
             td {
                 border: none;
                 position: relative;
                 padding-left: 50%;
             }
+
             td:before {
                 position: absolute;
                 top: 6px;
@@ -131,15 +143,19 @@
                 content: attr(data-label);
                 font-weight: bold;
             }
-            .input-group input, .input-group button {
+
+            .input-group input,
+            .input-group button {
                 width: 100%;
             }
+
             .container {
                 padding: 10px;
             }
         }
     </style>
 </head>
+
 <body>
     <main class="container">
         <section>
@@ -147,11 +163,13 @@
             <form>
                 <div class="input-group">
                     <label for="membersInput">Entrez les noms des membres (séparés par des virgules) :</label>
-                    <input type="text" id="membersInput" name="members" placeholder="Alice, Bob, Charlie, David, Eve, Frank" required>
+                    <input type="text" id="membersInput" name="member"
+                        placeholder="Alice, Bob, Charlie, David, Eve, Frank" required>
                 </div>
                 <div class="input-group">
                     <label for="buissonsInput">Entrez les types de buissons (séparés par des virgules) :</label>
-                    <input type="text" id="buissonsInput" name="buissons" placeholder="Herbes à paillote, Streptosolens, Arbre aux papillons" required>
+                    <input type="text" id="buissonsInput" name="buissons"
+                        placeholder="Herbes à paillote, Streptosolens, Arbre aux papillons" required>
                 </div>
                 <div class="input-group">
                     <button type="button" onclick="distributor.generateDistribution()">Générer Distribution</button>
@@ -162,7 +180,7 @@
                     <tr>
                         <th>Membre</th>
                         <th>Buissons à Donner</th>
-                        <th></th> 
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -173,192 +191,192 @@
         </section>
     </main>
 
-    <script >class BuissonDistributor {
-    constructor() {
-        this.typesBuissons = [];
-        this.tableBody = document.querySelector('#distributionTable tbody');
-        this.copyButtonContainer = document.getElementById('copyButtonContainer');
-    }
+    <script>class BuissonDistributor {
+            constructor() {
+                this.typesBuissons = [];
+                this.tableBody = document.querySelector('#distributionTable tbody');
+                this.copyButtonContainer = document.getElementById('copyButtonContainer');
+            }
 
-    // Generates a distribution of bushes among members
-    generateBuissonList(membres) {
-        const numMembres = membres.length;
-        const numBuissons = this.typesBuissons.length;
+            // Generates a distribution of bushes among members
+            generateBuissonList(membres) {
+                const numMembres = membres.length;
+                const numBuissons = this.typesBuissons.length;
 
-        if (numMembres === 0) {
-            throw new Error('Aucun membre spécifié.');
-        }
-        if (numBuissons === 0) {
-            throw new Error('Aucun type de buisson spécifié.');
-        }
+                if (numMembres === 0) {
+                    throw new Error('Aucun membre spécifié.');
+                }
+                if (numBuissons === 0) {
+                    throw new Error('Aucun type de buisson spécifié.');
+                }
 
-        return membres.map((member, memberIndex) => {
-            let memberBuissons = [];
-            for (let j = 1; j < numMembres; j++) {
-                const recipientIndex = (memberIndex + j) % numMembres;
-                const buisson = this.typesBuissons[(j - 1) % numBuissons]; // Cycle through bush types
-                memberBuissons.push({
-                    recipient: membres[recipientIndex],
-                    buisson: buisson
+                return membres.map((member, memberIndex) => {
+                    let memberBuissons = [];
+                    for (let j = 1; j < numMembres; j++) {
+                        const recipientIndex = (memberIndex + j) % numMembres;
+                        const buisson = this.typesBuissons[(j - 1) % numBuissons]; // Cycle through bush types
+                        memberBuissons.push({
+                            recipient: membres[recipientIndex],
+                            buisson: buisson
+                        });
+                    }
+                    return { member, list: memberBuissons };
                 });
             }
-            return { member, list: memberBuissons };
-        });
-    }
 
-    // Displays the distribution in the table
-    displayDistribution(distribution) {
-        this.tableBody.innerHTML = ''; // Clear previous content
+            // Displays the distribution in the table
+            displayDistribution(distribution) {
+                this.tableBody.innerHTML = '';
 
-        distribution.forEach((entry, index) => {
-            const row = document.createElement('tr');
+                distribution.forEach((entry, index) => {
+                    const row = document.createElement('tr');
 
-            const cellMembre = this.createCell(entry.member, 'Membres');
-            row.appendChild(cellMembre);
+                    const cellMembre = this.createCell(entry.member, 'Membres');
+                    row.appendChild(cellMembre);
 
-            // Group bushes by type for display
-            const groupedBuissons = this.groupBuissons(entry.list);
-            const cellBuissons = this.createCell(this.formatBuissons(groupedBuissons), 'Buissons à Donner');
-            row.appendChild(cellBuissons);
+                    const groupedBuissons = this.groupBuissons(entry.list);
+                    const cellBuissons = this.createCell(this.formatBuissons(groupedBuissons), 'Buissons à Donner');
+                    row.appendChild(cellBuissons);
 
-            const cellAction = this.createCopyCell(index, entry.member);
-            row.appendChild(cellAction);
+                    const cellAction = this.createCopyCell(index, entry.member);
+                    row.appendChild(cellAction);
 
-            this.tableBody.appendChild(row);
-        });
-    }
+                    this.tableBody.appendChild(row);
+                });
+            }
 
-    // Helper method to create table cells with data labels for responsiveness
-    createCell(content, label) {
-        const cell = document.createElement('td');
-        cell.textContent = content;
-        cell.setAttribute('data-label', label);
-        return cell;
-    }
+            // Helper method to create table cells with data labels for responsiveness
+            createCell(content, label) {
+                const cell = document.createElement('td');
+                cell.textContent = content;
+                cell.setAttribute('data-label', label);
+                return cell;
+            }
 
-    // Helper method to group bushes by type
-    groupBuissons(list) {
-        return list.reduce((acc, curr) => {
-            if (!acc[curr.buisson]) acc[curr.buisson] = [];
-            acc[curr.buisson].push(curr.recipient);
-            return acc;
-        }, {});
-    }
+            // Helper method to group bushes by type
+            groupBuissons(list) {
+                return list.reduce((acc, curr) => {
+                    if (!acc[curr.buisson]) acc[curr.buisson] = [];
+                    acc[curr.buisson].push(curr.recipient);
+                    return acc;
+                }, {});
+            }
 
-    // Format grouped bushes for display
-    formatBuissons(buissonMap) {
-        return Object.keys(buissonMap).map(buisson => 
-            `${buisson}: ${buissonMap[buisson].join(', ')}`
-        ).join(' | ');
-    }
+            // Format grouped bushes for display
+            formatBuissons(buissonMap) {
+                return Object.keys(buissonMap).map(buisson =>
+                    `${buisson}: ${buissonMap[buisson].join(', ')}`
+                ).join(' | ');
+            }
 
-    // Create the action cell for copying a row
-    createCopyCell(index, member) {
-        const cellAction = document.createElement('td');
-        const copyButton = document.createElement('button');
-        copyButton.textContent = 'Copier';
-        copyButton.className = 'copy-row-button';
-        copyButton.onclick = () => this.copyRow(index);
-        copyButton.setAttribute('aria-label', `Copier la ligne pour ${member}`);
-        cellAction.appendChild(copyButton);
-        return cellAction;
-    }
+            // Create the action cell for copying a row
+            createCopyCell(index, member) {
+                const cellAction = document.createElement('td');
+                const copyButton = document.createElement('button');
+                copyButton.textContent = 'Copier';
+                copyButton.className = 'copy-row-button';
+                copyButton.onclick = () => this.copyRow(index);
+                copyButton.setAttribute('aria-label', `Copier la ligne pour ${member}`);
+                cellAction.appendChild(copyButton);
+                return cellAction;
+            }
 
-    // Main function to generate distribution based on user input
-    generateDistribution() {
-        const membersInput = document.getElementById('membersInput').value;
-        const buissonsInput = document.getElementById('buissonsInput').value;
+            // Main function to generate distribution based on user input
+            generateDistribution() {
+                const membersInput = document.getElementById('membersInput').value;
+                const buissonsInput = document.getElementById('buissonsInput').value;
 
-        const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
-        this.typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
-            // TODO: Validity Check
-            try {
-            const distribution = this.generateBuissonList(membres);
-            this.displayDistribution(distribution);
-            // Show the copy button after distribution is generated
-            this.copyButtonContainer.style.display = 'block';
-        } catch (error) {
-            console.error('Erreur lors de la génération de la distribution:', error);
-            alert(error.message);
-            // Hide the copy button if there's an error
-            this.copyButtonContainer.style.display = 'none';
-        }
-    }
-    // Copies the entire table to clipboard
-    copyToClipboard() {
-    const table = document.getElementById('distributionTable');
-    const rows = table ? table.querySelectorAll('tr') : [];
-    let textToCopy = '';
-
-    rows.forEach((row, rowIndex) => {
-        const cells = row.cells;
-        if (cells && Array.from) { // Check if cells exist and Array.from works
-            Array.from(cells).forEach((cell, cellIndex) => {
-                // Only copy the content if the cell doesn't contain the "Copier" button
-                if (!cell.querySelector('.copy-row-button')) {
-                    textToCopy += (cellIndex === 0 ? `${cell.textContent} =` : cell.textContent);
-                    if (cellIndex < cells.length - 2) { // -2 because we exclude the last cell which might have the button
-                        textToCopy += '\t'; // Tab as separator for cells
-                    }
+                const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
+                this.typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
+                // TODO: Validity Check
+                try {
+                    const distribution = this.generateBuissonList(membres);
+                    this.displayDistribution(distribution);
+                    // Show the copy button after distribution is generated
+                    this.copyButtonContainer.style.display = 'block';
+                } catch (error) {
+                    console.error('Erreur lors de la génération de la distribution:', error);
+                    alert(error.message);
+                    // Hide the copy button if there's an error
+                    this.copyButtonContainer.style.display = 'none';
                 }
-            });
-        }
-        if (rowIndex < rows.length - 1) textToCopy += '\n'; // New line for each row
-    });
+            }
+            // Copies the entire table to clipboard
+            copyToClipboard() {
+                const table = document.getElementById('distributionTable');
+                const rows = table ? table.querySelectorAll('tr') : [];
+                let textToCopy = '';
 
-    this.copyTextToClipboard(textToCopy);
-}
-    // Copies a single row to clipboard
-    copyRow(index) {
-    const row = this.tableBody.querySelectorAll('tr')[index];
-    if (!row) return; // Ensure the row exists before proceeding
+                rows.forEach((row, rowIndex) => {
+                    const cells = row.cells;
+                    if (cells && Array.from) { // Check if cells exist and Array.from works
+                        Array.from(cells).forEach((cell, cellIndex) => {
+                            // Only copy the content if the cell doesn't contain the "Copier" button
+                            if (!cell.querySelector('.copy-row-button')) {
+                                textToCopy += (cellIndex === 0 ? `${cell.textContent} =` : cell.textContent);
+                                if (cellIndex < cells.length - 2) { // -2 because we exclude the last cell which might have the button
+                                    textToCopy += '\t';
+                                }
+                            }
+                        });
+                    }
+                    if (rowIndex < rows.length - 1) textToCopy += '\n';
+                });
 
-    let textToCopy = '';
-    
-    Array.from(row.cells).forEach((cell, idx) => {
-        // Skip the cell if it contains the copy button
-        if (!cell.querySelector('.copy-row-button')) {
-            textToCopy += (idx === 0 ? `${cell.textContent} =` : cell.textContent);
-            if (idx < row.cells.length - 2) { // -2 because we exclude the last cell which might have the button
-                textToCopy += '\t';
+                this.copyTextToClipboard(textToCopy);
+            }
+            // Copies a single row to clipboard
+            copyRow(index) {
+                const row = this.tableBody.querySelectorAll('tr')[index];
+                if (!row) return;
+
+                let textToCopy = '';
+
+                Array.from(row.cells).forEach((cell, idx) => {
+                    // Skip the cell if it contains the copy button
+                    if (!cell.querySelector('.copy-row-button')) {
+                        textToCopy += (idx === 0 ? `${cell.textContent} =` : cell.textContent);
+                        if (idx < row.cells.length - 2) { // -2 because we exclude the last cell which might have the button
+                            textToCopy += '\t';
+                        }
+                    }
+                });
+
+                this.copyTextToClipboard(textToCopy);
+            }
+
+            // Helper method to copy text to clipboard with fallback
+            copyTextToClipboard(text) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).catch(err => {
+                        console.error('Could not copy text:', err);
+                        this.copyTextFallback(text);
+                    });
+                } else {
+                    this.copyTextFallback(text);
+                }
+            }
+            // Fallback method for copying text if Clipboard API isn't supported
+            copyTextFallback(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    console.log('Copied to clipboard');
+                } catch (err) {
+                    console.error('Could not copy text:', err);
+                } finally {
+                    document.body.removeChild(textarea);
+                }
             }
         }
-    });
 
-    this.copyTextToClipboard(textToCopy);
-}
-
-    // Helper method to copy text to clipboard with fallback
-    copyTextToClipboard(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).catch(err => {
-            console.error('Could not copy text:', err);
-            this.copyTextFallback(text);
-        });
-    } else {
-        this.copyTextFallback(text);
-    }
-}
-    // Fallback method for copying text if Clipboard API isn't supported
-    copyTextFallback(text) {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed'; // Avoid scrolling the page
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            document.execCommand('copy');
-            console.log('Copied to clipboard');
-        } catch (err) {
-            console.error('Could not copy text:', err);
-        } finally {
-            document.body.removeChild(textarea);
-        }
-    }
-}
-
-// Initialize the distributor
-const distributor = new BuissonDistributor();
-</script>
+        // Initialize the distributor
+        const distributor = new BuissonDistributor();
+    </script>
 </body>
+
 </html>
