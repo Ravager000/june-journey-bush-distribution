@@ -203,13 +203,6 @@
                 const numMembres = membres.length;
                 const numBuissons = this.typesBuissons.length;
 
-                if (numMembres === 0) {
-                    throw new Error('Aucun membre spécifié.');
-                }
-                if (numBuissons === 0) {
-                    throw new Error('Aucun type de buisson spécifié.');
-                }
-
                 return membres.map((member, memberIndex) => {
                     let memberBuissons = [];
                     for (let j = 1; j < numMembres; j++) {
@@ -226,12 +219,13 @@
 
             // Displays the distribution in the table
             displayDistribution(distribution) {
-                this.tableBody.innerHTML = '';
+                this.tableBody.innerHTML = ''; // Clear existing content
+                const fragment = document.createDocumentFragment(); // Create document fragment
 
                 distribution.forEach((entry, index) => {
                     const row = document.createElement('tr');
 
-                    const cellMembre = this.createCell(entry.member, 'Membres');
+                    const cellMembre = this.createCell(entry.member, 'Membre');
                     row.appendChild(cellMembre);
 
                     const groupedBuissons = this.groupBuissons(entry.list);
@@ -241,10 +235,11 @@
                     const cellAction = this.createCopyCell(index, entry.member);
                     row.appendChild(cellAction);
 
-                    this.tableBody.appendChild(row);
+                    fragment.appendChild(row); // Add row to fragment
                 });
-            }
 
+                this.tableBody.appendChild(fragment); // Single DOM manipulation
+            }
             // Helper method to create table cells with data labels for responsiveness
             createCell(content, label) {
                 const cell = document.createElement('td');
@@ -288,7 +283,15 @@
 
                 const membres = membersInput.split(',').map(name => name.trim()).filter(name => name);
                 this.typesBuissons = buissonsInput.split(',').map(type => type.trim()).filter(type => type);
-                // TODO: Validity Check
+                if (membres.length < 2) {
+                    throw new Error('Il faut au moins 2 membres pour la distribution.');
+                }
+                if (new Set(membres).size !== membres.length) {
+                    throw new Error('Les noms des membres doivent être uniques.');
+                }
+                if (this.typesBuissons.length < 2) {
+                    throw new Error('Il faut au moins 2 Buissons pour la distribution.');
+                }
                 try {
                     const distribution = this.generateBuissonList(membres);
                     this.displayDistribution(distribution);
