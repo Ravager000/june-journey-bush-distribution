@@ -206,8 +206,8 @@
                 return membres.map((member, memberIndex) => {
                     let memberBuissons = [];
                     // Limite le nombre de distributions au plus petit des deux :
-                    // (nombre de membres ) ou (nombre de buissons disponibles)
-                    const maxDistributions = Math.min(numMembres , numBuissons);
+                    // (nombre de membres - 1) ou (nombre de buissons disponibles)
+                    const maxDistributions = Math.min(numMembres -1 , numBuissons);
 
                     for (let j = 1; j <= maxDistributions; j++) {
                         const recipientIndex = (memberIndex + j) % numMembres;
