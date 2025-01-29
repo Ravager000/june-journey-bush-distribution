@@ -205,12 +205,16 @@
 
                 return membres.map((member, memberIndex) => {
                     let memberBuissons = [];
-                    for (let j = 1; j < numMembres; j++) {
+                    // Limite le nombre de distributions au plus petit des deux :
+                    // (nombre de membres ) ou (nombre de buissons disponibles)
+                    const maxDistributions = Math.min(numMembres , numBuissons);
+
+                    for (let j = 1; j <= maxDistributions; j++) {
                         const recipientIndex = (memberIndex + j) % numMembres;
-                        const buisson = this.typesBuissons[(j - 1) % numBuissons]; // Cycle through bush types
+                        const buissonIndex = j - 1; // Index direct sans modulo
                         memberBuissons.push({
                             recipient: membres[recipientIndex],
-                            buisson: buisson
+                            buisson: this.typesBuissons[buissonIndex]
                         });
                     }
                     return { member, list: memberBuissons };
